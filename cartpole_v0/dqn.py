@@ -103,7 +103,14 @@ class DeepQLearningAgent(object):
         keep an experience for later training.
         """
         if self._experiences_num >= self._experiences_max:
-            idx = np.random.choice(self._experiences_max)
+            # make sure we always have some painalities.
+            a = self._experiences_max * 9 / 10
+            b = self._experiences_max - a
+
+            if reward > 0.0:
+                idx = np.random.choice(a)
+            else:
+                idx = np.random.choice(b) + a
         else:
             idx = self._experiences_num
 
@@ -183,7 +190,7 @@ if __name__ == '__main__':
 
         for step in xrange(max_steps):
             if done and step + 1 < max_steps:
-                reward = -100.0
+                reward = -500.0
                 observation = np.zeros_like(observation)
 
             action = agent.act(observation, reward, done)
